@@ -60,7 +60,7 @@ User.findOne({email:email})
             // res.json({message:'successfully signed in'})
 const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
 const {_id,name,email}=savedUser;
-res.json({token,User:{_id,name,email}});
+res.json({token,user:{_id,name,email}});
         }else{
             return res.status(404).json({error:'Invalid Email or password'})
         }

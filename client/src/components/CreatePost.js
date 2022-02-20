@@ -1,15 +1,38 @@
-import React,{ useState}from "react";
+import React,{ useState,useEffect}from "react";
 import { Container } from "react-bootstrap";
 import {useNavigate } from'react-router-dom'
 
 function CreatePost() {
     
-    const navigator = useNavigate();
+    const navigate = useNavigate();
     const [title,setTitle] = useState("")
     const [body,setBody] = useState("")
     const [image,setImage] = useState("")
     const [url,setUrl] = useState("")
 
+    // i put this in useEffect because i want to get the url first from cloudnary
+    useEffect(()=>{
+        if(url){
+            fetch("/createpost",{
+                method:"post",
+                headers:{
+                    "content-type":"application/json",
+                    "Authorization":"Bearer "+localStorage.getItem("jwt")
+                    },
+                body:JSON.stringify({
+                        title:title,
+                        body:body,
+                        pic:url
+                         })
+            }).then(res=>res.json())
+            .then(data=>{
+                console.log(data);
+                navigate('/')
+            })
+     }
+     },[url])
+
+     //getting url for the uploaded images from cloudnary
     const postDetails = ()=>{
         const data = new FormData();
         data.append("file",image)
@@ -30,20 +53,7 @@ function CreatePost() {
             console.log(err)
         })
 
-        fetch("/createpost",{
-            method:"post",
-            headers:{
-                "content-type":"application/json"
-                },
-            body:JSON.stringify({
-                    title:title,
-                    body:body,
-                    pic:url
-                     })
-        }).then(res=>res.json())
-        .then(data=>{
-            console.log(data);
-        })
+       
     }
 
 

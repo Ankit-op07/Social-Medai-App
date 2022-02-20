@@ -1,7 +1,12 @@
-import React,{useEffect, useState,} from 'react'
+import React,{ useState,useContext } from 'react'
 import {Form,Button, Container  } from 'react-bootstrap'
 import { Link,useNavigate } from 'react-router-dom'
+import {UserContext} from '../App'
 function Signin() {
+
+  const {state,dispatch} = useContext(UserContext);
+// console.log(useContext(UserContext))
+
 
   const [email,setEmail]=useState('')
   const [password,setPassword]=useState('')
@@ -35,6 +40,9 @@ body:JSON.stringify({
   setToastMsg(data.error);
    }
    else{
+     localStorage.setItem('jwt',data.token)
+     localStorage.setItem('user',JSON.stringify(data.user))
+      dispatch({type:"USER",payload:data.user})
     navigate('/')
    }
   console.log(data);
