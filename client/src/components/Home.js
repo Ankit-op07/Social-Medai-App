@@ -8,6 +8,7 @@ import {
   MDBBtn,
   MDBSpinner
 } from 'mdb-react-ui-kit';
+import {Link} from 'react-router-dom'
 
 function Home() {
 
@@ -24,7 +25,7 @@ function Home() {
       }
   }).then(res=>res.json())
   .then(data=>{
-    console.log(data)
+    // console.log(data)
     setPosts(data.posts)
   })
 },[])
@@ -106,19 +107,44 @@ setPosts(newData);
 })
 }
 
-// console.log(posts)
+console.log(posts)
 
-const deletePost = (postId)=>{
-  fetch(`/delete/:${postId}`,{
-    method:"delete",
-    headers:{
-      "Authorization":"Bearer "+localStorage.getItem("jwt")
-    }
+const deletePost = (postid)=>{
+  fetch(`/deletepost/${postid}`,{
+      method:"delete",
+      headers:{
+          Authorization:"Bearer "+localStorage.getItem("jwt")
+      }
   }).then(res=>res.json())
   .then(result=>{
-    console.log(result);
+      console.log(result)
+      const newData = posts.filter(item=>{
+          return item._id !== result._id
+      })
+      setPosts(newData)
   })
 }
+
+// const deletePostComment = (postid,commentId)=>{
+//   console.log(postid,commentId)
+//   fetch(`/deletecomment/${postid}/${commentId}`,{
+//       method:"delete",
+//       headers:{
+//           Authorization:"Bearer "+localStorage.getItem("jwt")
+//       }
+//   }).then(res=>res.json())
+//   .then(result=>{
+//       console.log(result)
+      
+//       const newData = posts.filter(item=>{
+//           item.comments.filter((comment)=>{
+//             return comment._id !=result._id
+//           })
+
+//       })
+//       setPosts(newData)
+//   })
+// }
 
 
 
@@ -142,8 +168,18 @@ const deletePost = (postId)=>{
           <div>
            
             <div className="d-flex justify-content-center mb-5" key={post._id}>
-    <div className="card w-75" >
-    <h3>{post.postedBy.name}</h3>
+    <div className="card w-50" >
+      <div className="d-flex justify-content-between mb-1">
+      <h3 className="post_heading_name"><Link to={ state._id===post.postedBy._id ? '/profile'  :`/profile/${post.postedBy._id}`} >{post.postedBy.name}</Link></h3>
+      { 
+        post.postedBy._id === state._id  &&
+
+      <MDBBtn className='mx-2' color='danger' onClick={()=>deletePost(post._id)}>
+       Delete
+      </MDBBtn>
+      }
+      </div>
+    
   <img src={post.photo} className="card-img-top" alt="..."/>
   <div className="post_logos">
     {
@@ -167,7 +203,7 @@ const deletePost = (postId)=>{
  post.comments.map((comment)=>{
    return (
      <div>
-   <span className="fw-bold">{comment.postedBy.name}</span> <span>{comment.text}</span>
+   {comment.postedBy._id === state._id && <i class="fas fa-trash logo" ></i>}<span className="fw-bold">  {comment.postedBy.name}</span> <span>{comment.text}</span>
    </div>
    )
  })

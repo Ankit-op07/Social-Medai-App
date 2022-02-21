@@ -35,7 +35,7 @@ function Navibar() {
   return (
     <>
 
-  <Navbar bg="light" variant="light">
+  <Navbar bg="light" variant="light" className="fixed-to">
     <Container>
     <Navbar.Brand> <Link to={state?'/':'/signin'}>Instagram</Link> </Navbar.Brand>
     <Nav className="me-auto">

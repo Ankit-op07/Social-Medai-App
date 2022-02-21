@@ -56,6 +56,8 @@ Post.findByIdAndUpdate(req.body.postId,{
 },{
     new:true
 })
+.populate('postedBy','_id name')
+    .populate("comments.postedBy","_id name")
 .exec((err,result)=>{
     if(err){
         return res.status(422).json({error:err})
@@ -71,6 +73,8 @@ router.put('/unlike',requireLogin,(req,res)=>{
     },{
         new:true
     })
+    .populate('postedBy','_id name')
+    .populate("comments.postedBy","_id name")
     .exec((err,result)=>{
         if(err){
             return res.status(422).json({error:err})
@@ -103,21 +107,43 @@ router.put('/comment',requireLogin,(req,res)=>{
     })
     })
 
-router.delete('/delete/:postId',requireLogin,(req,res)=>{
-    Post.findOne({id:req.params.postId})
-    .populate('postedBy','_id')
-    .exec((err,post)=>{
-        if(err || !post ){ return res.status(422).json({error:err})}
-        if(post.postedBy.id.toString() === req.user._id.toString()){
-                post.remove()
-                .then(result =>{
-                    res.json({message:"delete successfully"})
-                })
-                .catch(err =>{
-                    console.log(err);
-                })
-        }
+    router.delete('/deletepost/:postId',requireLogin,(req,res)=>{
+        Post.findOne({_id:req.params.postId})
+        .populate("postedBy","_id")
+        .exec((err,post)=>{
+            if(err || !post){
+                return res.status(422).json({error:err})
+            }
+            if(post.postedBy._id.toString() === req.user._id.toString()){
+                  post.remove()
+                  .then(result=>{
+                      res.json(result)
+                  }).catch(err=>{
+                      console.log(err)
+                  })
+            }
+        })
     })
-})
+
+    // router.delete('/deletecomment/:postId/:commentId',requireLogin,(req,res)=>{
+    //   Post.findOne({
+    //       _id: req.params.postId
+    //     })
+    //     .populate("postedBy","_id")
+    //     .exec((err,comment)=>{
+    //         if(err){
+    //             return res.status(422).json({error:err})
+    //         }
+    //         if(comment.postedBy._id.toString() === req.user._id.toString()){
+    //             comment.remove()
+    //             .then(result=>{
+    //                 res.json(result)
+    //             }).catch(err=>{
+    //                 console.log(err);
+    //             })
+                    
+    //         }
+    //     })
+    // })
 
 module.exports = router;

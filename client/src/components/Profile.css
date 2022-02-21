@@ -60,3 +60,8 @@ width:30% !important;
    height:100%;
     }
 
+.profile_name{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}

@@ -8,7 +8,7 @@ import Profile from './components/Profile';
 import Navibar from './components/Navibar';
 import CreatePost from './components/CreatePost';
 import {reducer,initialState} from './reducers/userReducer';
-
+import UserProfile from './components/UserProfile';
 export const UserContext = createContext();
 
 const Routing = ()=>{
@@ -36,11 +36,14 @@ if(user){
    <Route path="/signup"
    element={<Signup/>}>
    </Route>
-   <Route path="/profile"
+   <Route exact path="/profile"
    element={<Profile/>}>
    </Route>
    <Route path="/createpost"
    element={<CreatePost/>}>
+   </Route>
+   <Route path="/profile/:userid"
+   element={<UserProfile/>}>
    </Route>
    </Routes>
   )
